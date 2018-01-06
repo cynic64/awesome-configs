@@ -9,6 +9,7 @@ local programs = 'echo "efficiency\nminimal\ncolorswitcher\nemacs wall\naxe\ndis
 
 function update_tag()
     -- current tag
+    log('tags switched')
     local tag, i
     current_tag = 'idk'
     local tags = root.tags()
@@ -17,37 +18,43 @@ function update_tag()
             current_tag = tag
         end
     end
+    log('\t' .. current_tag.name)
 
     w.children[1].image = icondir .. current_tag.name .. '.png'
 end
 
+function change_colors(stdout)
+    current_wall = stdout
+    awful.spawn.easy_async_with_shell(
+        'python3 /home/void/stuff/python/wall-based.py ' .. stdout,
+        function()
+            gears.wallpaper.fit('/home/void/stuff/awesome/black.jpg')
+            gears.wallpaper.fit('/home/void/stuff/awesome/bg.png')
+            reload_xterm()
+            beautiful.border_color = xterm.red
+
+            for _, c in ipairs(client.get()) do
+                if client.focus == c then
+                    c.border_color = beautiful.border_color
+                else
+                    c.border_color = '#000000'
+                end
+            end
+
+            art_update()
+            bart_update()
+            update_axe()
+            blur_wall()
+        end)
+end
+
 function colorswitcher()
     awful.spawn.easy_async_with_shell(
-        -- 'python3 /home/void/stuff/python/wall-based.py $(ls /home/void/stuff/awesome/pngs/ | shuf | rofi -dmenu)',
         'ls /home/void/stuff/awesome/pngs/ | shuf | rofi -dmenu',
         function(stdout)
             stdout = stdout:match('(.+)\n')
-            current_wall = stdout
-            awful.spawn.easy_async_with_shell(
-                'python3 /home/void/stuff/python/wall-based.py ' .. stdout,
-                function()
-                    gears.wallpaper.fit('/home/void/stuff/awesome/black.jpg')
-                    gears.wallpaper.fit('/home/void/stuff/awesome/bg.png')
-                    reload_xterm()
-                    beautiful.border_color = xterm.red
-                    for _, c in ipairs(client.get()) do
-                        if client.focus == c then
-                            c.border_color = beautiful.border_color
-                        else
-                            c.border_color = '#000000'
-                        end
-                    end
-                    art_update()
-                    bart_update()
-                    update_axe()
-                    blur_wall()
-                end)
-    end)
+            change_colors(stdout)
+        end)
 end
 
 function gap_changer()

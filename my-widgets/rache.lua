@@ -95,8 +95,8 @@ function rache.toggle(name)
                     grabbing = false
                 elseif key == 'Down' then
                     m.start_idx = m.start_idx + 1
-                    if m.start_idx > #m.shown_items then
-                        m.start_idx = #m.show_items
+                    if m.start_idx > #m.items then
+                        m.start_idx = #m.items
                     end
                 elseif key == 'Up' then
                     m.start_idx = m.start_idx - 1

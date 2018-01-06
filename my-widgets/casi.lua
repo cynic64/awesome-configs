@@ -74,7 +74,7 @@ stats = {
 -- functions that needn't be constantly updated
 watch('echo', 60, function()
     -- music cache
-    awful.spawn.easy_async_with_shell('cat ~/stuff/awesome/cmus-cache.txt', function(stdout)
+    awful.spawn.easy_async_with_shell('cat /home/void/stuff/awesome/cmus-cache.txt', function(stdout)
         cache = { }
         for line in stdout:gmatch('[^\r\n]+') do
             filename, title = line:match('<(.-)> <(.-)>')

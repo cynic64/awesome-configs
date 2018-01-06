@@ -26,7 +26,7 @@ local w = wibox.widget {
 -- create menus
 rache.add( { name = 'tags', width = 200, height = 100, x = 100, y = 100 }, function() end)
 rache.add( { name = 'layout', width = 200, height = 100, x = 200, y = 200 }, function() end)
-rache.add( { name = 'music', width = 400, height = 200, x = 1920 / 2 + 300 - 400 / 2, y = 1080 - 32 - 200 }, function(clicked_title)
+rache.add( { name = 'music', width = 400, height = 200, x = 1920 / 2 - 400 / 2, y = 1080 - 32 - 200 }, function(clicked_title)
         log('yo!')
         log(clicked_title)
         for i, title in ipairs(stats.queue) do
@@ -41,25 +41,10 @@ rache.add( { name = 'music', width = 400, height = 200, x = 1920 / 2 + 300 - 400
         end
 end)
 rache.add(
-    { name = 'colors', width = 160, height = 400, x = 1920 - 500, y = 1080 - 32 - 400 },
+    { name = 'colors', width = 200, height = 400, x = 1920 - 560, y = 1080 - 32 - 400 },
     function(choice)
-        local _ = 'python3 /home/void/stuff/python/wall-based.py ' .. choice
-        awful.spawn.easy_async_with_shell(_,
-                                          function()
-                                              gears.wallpaper.fit('/home/void/stuff/awesome/bg.png')
-                                              reload_xterm()
-                                              beautiful.border_color = xterm.red
-                                              for _, c in ipairs(client.get()) do
-                                                  if client.focus == c then
-                                                      c.border_color = beautiful.border_color
-                                                  else
-                                                      c.border_color = '#000000'
-                                                  end
-                                              end
-                                              art_update()
-                                              bart_update()
-        end)
-end)
+        change_colors(choice)
+    end)
 
 -- generate a list of wallpapers
 awful.spawn.easy_async_with_shell('ls ~/stuff/awesome/pngs', function(stdout)
@@ -85,8 +70,8 @@ local w_cairo = w.children[1]
 local menu_rects = {
     tags = { 0, 0, 280, s_height } ,
     layout = { 280, 0, 40, s_height },
-    music = { s_width / 2 + 200, 0, 200, s_height },
-    colors = { s_width - 620, 0, 160, s_height }
+    music = { s_width / 2 - 100, 0, 200, s_height },
+    colors = { s_width - 560, 0, 200, s_height }
 }
 
 local current_menu = 'none'
@@ -215,6 +200,7 @@ function bart_update()
         cr:stroke()
     end
 
+    --[[
     -- schedule
     local total_start_x, total_stop_x = 350, s_width - 800
     local scale = (total_stop_x - total_start_x) / 1440
@@ -249,11 +235,12 @@ function bart_update()
     local pos_x = total_start_x + current_pos * scale
     cr:move_to(pos_x, s_height * 0.75)
     cr:line_to(pos_x, s_height)
+    ]]
 
     -- music
     cr:set_source(gears.color(text_color))
     local width = cr:text_extents(stats.currently_playing).width
-    local x = s_width / 2 + 300
+    local x = s_width / 2
     cr:move_to(x - width / 2, 20)
     cr:show_text(stats.currently_playing)
     cr:stroke()
@@ -371,8 +358,7 @@ function check_mouseover()
         last_menu = current_menu
         if current_menu ~= 'none' then
             if current_menu == 'music' then
-                -- rache.set_items('music', stats.queue)
-                rache.set_items('music', { 'a 1', 'a 2', 'wheee!', 'let\'s see if this works', 'scroll already!', 'more.', '.', 'how much farther?', 'derp.' })
+                rache.set_items('music', stats.queue)
             end
             rache.toggle(current_menu)
         end

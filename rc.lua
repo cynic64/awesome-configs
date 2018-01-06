@@ -35,23 +35,23 @@ current_wall = 'vor'
 
 -- helpful functions
 function blur_wall()
-    tag = awful.screen.focused().selected_tag
-    visible_clients = false
-    for _, c in ipairs(tag:clients()) do
-        if not c.minimized then
-            visible_clients = true
+        tag = awful.screen.focused().selected_tag
+        visible_clients = false
+        for _, c in ipairs(tag:clients()) do
+            if not c.minimized then
+                visible_clients = true
+            end
         end
-    end
-    if visible_clients then
-        gears.wallpaper.fit('/home/void/stuff/awesome/blurred/' .. current_wall .. '.blur')
-        box.visible = false
-        artemis_visible = false
-    else
-        gears.wallpaper.fit('/home/void/stuff/awesome/pngs/' .. current_wall)
-        box.visible = true
-        artemis_visible = false
-        update_axe()
-    end
+        if visible_clients then
+            gears.wallpaper.fit('/home/void/stuff/awesome/blurred/' .. current_wall .. '.blur')
+            box.visible = false
+            artemis_visible = false
+        else
+            gears.wallpaper.fit('/home/void/stuff/awesome/pngs/' .. current_wall)
+            box.visible = true
+            artemis_visible = false
+            update_axe()
+        end
 end
 
 -- global variables --
