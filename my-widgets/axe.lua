@@ -1,4 +1,4 @@
--- the amazing, all new, epic, AXE-CLOCK! --
+-- the amazing, all new, epic, THING! --
 local awful = require('awful')
 local beautiful = require('beautiful')
 local wibox = require('wibox')
@@ -17,7 +17,7 @@ local cairobox = wibox.widget {
     widget = wibox.widget.imagebox
 }
 
-box = wibox { width = s_width, height = s_height, widget = cairobox, visible = false, bg = '#88888800' }
+axebox = wibox { width = s_width, height = s_height, widget = cairobox, visible = false, bg = '#88888800' }
 
 local function hand(cr, x, y, length, value, width)
     -- cr: cairo context
@@ -55,7 +55,7 @@ function color_severity(value, color)
 end
 
 function toggle_axe()
-    box.visible = not box.visible
+    axebox.visible = not axebox.visible
     update_axe()
 end
 
@@ -266,8 +266,6 @@ watch(
     'echo',
     TICK_SPEED,
     function()
-        if box.visible then
-            update_axe()
-        end
+        update_axe()
     end
 )

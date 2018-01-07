@@ -24,6 +24,7 @@ function update_tag()
 end
 
 function change_colors(stdout)
+    if not stdout then return end
     current_wall = stdout
     awful.spawn.easy_async_with_shell(
         'python3 /home/void/stuff/python/wall-based.py ' .. stdout,
@@ -197,16 +198,18 @@ function spawner()
             elseif out == 'minimal' then
                 if not minimal then       -- make things minimal
                     gears.wallpaper.fit('/home/void/stuff/awesome/black.jpg')
-                    artemis_visible = false
+                    current_mon = 'was ' .. current_mon
                     art_update()
+                    update_axe()
                     bart.opacity = 0
                     efficiency = false
                     efficient()
                     awful.screen.focused().padding = { top = 0, bottom = 0, left = 0, right = 0 }
                     minimal = true
                 elseif minimal then
-                    artemis_visible = true
+                    current_mon = current_mon:match('was (.+)')
                     art_update()
+                    update_axe()
                     bart.opacity = 1
                     efficiency = true
                     efficient()
@@ -215,11 +218,11 @@ function spawner()
             elseif out == 'axe' then
                 toggle_axe()
                 artemis_visible = not artemis_visible
+                if artemis_visible then current_mon = 'artemis' else current_mon = 'axe' end
                 art_update()
             elseif out == 'disable axe/artemis' then
-                toggle_axe()
-                artemis_visible = false
-                art_update()
+                current_mon = 'none'
+                blur_wall()
             elseif out == 'cave' then
                 awful.spawn.with_shell('zsh ~/stuff/zsh/scripts/cave')
             end

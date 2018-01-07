@@ -23,6 +23,7 @@ require('my-widgets.bart')
 require('my-widgets.artemis')
 require('my-widgets.axe')
 require('my-widgets.spawner')
+require('my-widgets.bias')
 
 -- tree-tile
 local treetile = require("treetile")
@@ -31,26 +32,40 @@ local treetile = require("treetile")
 efficiency = true
 minimized = true
 
-current_wall = 'vor'
+current_wall = 'wire'
+current_mon = 'artemis'         -- either artemis, axe, or none
 
 -- helpful functions
 function blur_wall()
         tag = awful.screen.focused().selected_tag
         visible_clients = false
         for _, c in ipairs(tag:clients()) do
-            if not c.minimized then
+            if not c.minimized and c.name ~= '"cmus"' and c.name ~= 'neofetch' and c.name ~= 'cava' and c.opacity > 0 and c.name ~= 'pipes.sh' and c.name ~= 'pstree' then
                 visible_clients = true
             end
         end
         if visible_clients then
             gears.wallpaper.fit('/home/void/stuff/awesome/blurred/' .. current_wall .. '.blur')
-            box.visible = false
+            axebox.visible = false
             artemis_visible = false
+            for _, c in ipairs(client.get()) do
+                if c.name == '"cmus"' or c.name == 'cava' or c.name == 'neofetch' or c.name == 'pipes.sh' or c.name == 'pstree' then
+                    c.minimized = true
+                end
+            end
         else
             gears.wallpaper.fit('/home/void/stuff/awesome/pngs/' .. current_wall)
-            box.visible = true
-            artemis_visible = false
-            update_axe()
+            if current_mon == 'artemis' then
+                axebox.visible = false
+                artemis_visible = true
+            elseif current_mon == 'axe' then
+                axebox.visible = true
+                artemis_visible = false
+            else
+                axebox.visible = false
+                artemis_visible = false
+            end
+            art_update()
         end
 end
 
@@ -397,22 +412,26 @@ globalkeys = gears.table.join(
         end,
         {description = 'snap focused client', group = 'idk'}),
 
-    -- drop-down terminal
-    awful.key({ modkey }, "t",
-        function()
-        end,
-        {description = "spawner", group = "idk"}),
-
     awful.key({ modkey }, "x", spawner,
         {description = "spawner", group = "idk"}),
 
-    awful.key({ modkey }, "BackSpace", function()
+    awful.key({ modkey }, "=", function()
+            local tag = awful.screen.focused().selected_tag
+            for _, c in ipairs(tag:clients()) do
+                c.opacity = 0
+            end
             blur_wall()
+        end,
+        {description = "hide all", group = "idk"}),
+
+    awful.key({ modkey }, "BackSpace", function()
             local tag = awful.screen.focused().selected_tag
             for _, c in ipairs(tag:clients()) do
                 c.minimized = false
+                c.opacity = 0.7
             end
-                                       end,
+            blur_wall()
+        end,
         {description = "unhide all", group = "idk"}),
 
     awful.key({ modkey }, 'p', function()
@@ -653,21 +672,35 @@ awful.rules.rules = {
       }
     },
     { rule = { name = 'cava' },
-      properties = { floating = true, below = true, sticky = true, focusable = false },
+      properties = { floating = true, below = true, sticky = true, focusable = false, opacity = 0 },
       callback = function(c)
           c:geometry { width = 1920 / 3, height = 1080 / 3 }
           awful.placement.bottom_right(c)
       end
     },
+    { rule = { name = 'pipes.sh' },
+      properties = { floating = true, below = true, sticky = true, focusable = false, opacity = 0, geometry = { width = 1920 / 3, height = 1080 / 2 } },
+      callback = function(c)
+          c:geometry { width = 1920 / 3, height = 1080 / 2 }
+          awful.placement.top_left(c)
+      end
+    },
+    { rule = { name = 'pstree' },
+      properties = { floating = true, below = true, sticky = true, focusable = false, opacity = 0, geometry = { width = 1920 / 3, height = 1080 / 2 } },
+      callback = function(c)
+          c:geometry { width = 1920 / 3, height = 1080 / 2 }
+          awful.placement.bottom_left(c)
+      end
+    },
     { rule = { name = 'cmus' },
-      properties = { floating = true, below = true, sticky = true, focusable = false },
+      properties = { floating = true, below = true, sticky = true, focusable = false, opacity = 0 },
       callback = function(c)
           c:geometry { width = 1920 / 3, height = 1080 / 3 }
           awful.placement.top_right(c)
       end
     },
     { rule = { name = 'neofetch' },
-      properties = { floating = true, below = true, sticky = true, focusable = false },
+      properties = { floating = true, below = true, sticky = true, focusable = false, opacity = 0 },
       callback = function(c)
         c:geometry { width = 1920 / 3, height = 1080 / 3 }
         awful.placement.top_right(c, { offset = { y = 1080 / 3 } } )
