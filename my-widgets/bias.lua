@@ -13,6 +13,7 @@ local function show_cave()
     for _, c in ipairs(client.get()) do
         if c.name == '"cmus"' or c.name == 'cava' or c.name == 'neofetch' or c.name == 'pipes.sh' or c.name == 'pstree' or c.name == 'htop' then
             if bias_state == 'hidden' then
+                -- test
                 c.opacity = opac
                 c.minimized = false
                 axebox.visible = false

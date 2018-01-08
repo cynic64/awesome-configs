@@ -18,6 +18,14 @@ require("awful.hotkeys_popup.keys")
 require("collision")()
 lain = require("lain")
 
+-- set stuff
+efficiency = true
+minimized = true
+current_wall = 'wire'
+current_mon = 'artemis'         -- either artemis, axe, or none
+visible_clients = false         -- whether there are currently clients on the selected tag
+bias_state = 'hidden'
+
 -- requiring my functions
 require('my-widgets.casi')
 require('my-widgets.bart')
@@ -25,18 +33,10 @@ require('my-widgets.artemis')
 require('my-widgets.axe')
 require('my-widgets.spawner')
 require('my-widgets.bias')
+require('my-widgets.ake')
 
 -- tree-tile
 local treetile = require("treetile")
-
--- set efficiency and minimal-ness
-efficiency = true
-minimized = true
-
-current_wall = 'wire'
-current_mon = 'artemis'         -- either artemis, axe, or none
-visible_clients = false         -- whether there are currently clients on the selected tag
-bias_state = 'hidden'
 
 -- helpful functions
 function blur_wall()
@@ -737,7 +737,7 @@ client.connect_signal("manage", function (c)
                               awful.placement.no_offscreen(c)
                           end
                           bart_update()
-                          c.border_width = beautiful.border_widthi
+                          c.border_width = beautiful.border_width
                           c.border_color = beautiful.border_color
                           if c.name == 'cava' or c.name == 'cmus' or c.name == 'neofetch' then
                               c.border_width = 0
