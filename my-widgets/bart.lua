@@ -198,6 +198,20 @@ function bart_update()
         cr:move_to(x - radius * 0.2, y - radius / 2)
         cr:line_to(x - radius * 0.2, y - radius * 0.75)
         cr:stroke()
+    elseif layout_name == 'centerwork' then
+        cr:move_to(x - radius * 0.6, y - radius)
+        cr:line_to(x - radius * 0.6, y + radius)
+        cr:line_to(x + radius * 0.6, y + radius)
+        cr:line_to(x + radius * 0.6, y - radius)
+        cr:close_path()
+        cr:stroke()
+
+        cr:move_to(x - radius, y - radius)
+        cr:line_to(x - radius * 0.7, y - radius)
+        cr:line_to(x - radius * 0.7, y + radius)
+        cr:line_to(x - radius, y + radius)
+        cr:close_path()
+        cr:stroke()
     end
 
     --[[

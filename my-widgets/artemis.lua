@@ -309,11 +309,13 @@ function art_update()
         cr:move_to(x+80, y)
         cr:show_text('RAM')
 
-        -- swap usage
+        -- swap usage, broken for now
+        --[[
         make_arc(cr, x, y, radar_size - padding - 6 * 2, xterm.white, stats.swap)
         cr:set_source(gears.color(xterm.white))
         cr:move_to(x+80, y+20)
         cr:show_text('swap')
+        ]]
 
         -- battery
         make_arc(cr, x, y, radar_size - padding - 6 * 3, xterm.yellow, stats.battery)

@@ -14,8 +14,9 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
--- collision
+-- collision, and lain
 require("collision")()
+lain = require("lain")
 
 -- requiring my functions
 require('my-widgets.casi')
@@ -34,23 +35,27 @@ minimized = true
 
 current_wall = 'wire'
 current_mon = 'artemis'         -- either artemis, axe, or none
+visible_clients = false         -- whether there are currently clients on the selected tag
+bias_state = 'hidden'
 
 -- helpful functions
 function blur_wall()
         tag = awful.screen.focused().selected_tag
         visible_clients = false
         for _, c in ipairs(tag:clients()) do
-            if not c.minimized and c.name ~= '"cmus"' and c.name ~= 'neofetch' and c.name ~= 'cava' and c.opacity > 0 and c.name ~= 'pipes.sh' and c.name ~= 'pstree' then
+            if not c.minimized and c.name ~= '"cmus"' and c.name ~= 'neofetch' and c.name ~= 'cava' and c.opacity > 0 and c.name ~= 'pipes.sh' and c.name ~= 'pstree' and c.name ~= 'htop' then
                 visible_clients = true
             end
         end
         if visible_clients then
+            bias_state = 'hidden'
             gears.wallpaper.fit('/home/void/stuff/awesome/blurred/' .. current_wall .. '.blur')
             axebox.visible = false
             artemis_visible = false
             for _, c in ipairs(client.get()) do
-                if c.name == '"cmus"' or c.name == 'cava' or c.name == 'neofetch' or c.name == 'pipes.sh' or c.name == 'pstree' then
+                if c.name == '"cmus"' or c.name == 'cava' or c.name == 'neofetch' or c.name == 'pipes.sh' or c.name == 'pstree' or c.name == 'htop' then
                     c.minimized = true
+                    c.ontop = false
                 end
             end
         else
@@ -117,6 +122,7 @@ modkey = "Mod4"
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
     treetile,
+    lain.layout.centerwork,
     awful.layout.suit.tile,
     awful.layout.suit.floating,
     --awful.layout.suit.tile.left,
@@ -248,7 +254,7 @@ awful.screen.connect_for_each_screen(function(s)
         local l = awful.layout.suit  -- Just to save some typing: use an alias.
 
         awful.tag.add('term', {
-                          layout = l.tile,
+                          layout = lain.layout.centerwork,
                           screen = s,
                           selected = true
         })
@@ -418,7 +424,7 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "=", function()
             local tag = awful.screen.focused().selected_tag
             for _, c in ipairs(tag:clients()) do
-                c.opacity = 0
+                c.minimized = true
             end
             blur_wall()
         end,
@@ -681,15 +687,22 @@ awful.rules.rules = {
     { rule = { name = 'pipes.sh' },
       properties = { floating = true, below = true, sticky = true, focusable = false, opacity = 0, geometry = { width = 1920 / 3, height = 1080 / 2 } },
       callback = function(c)
-          c:geometry { width = 1920 / 3, height = 1080 / 2 }
+          c:geometry { width = 1920 / 3, height = 1080 / 3 }
           awful.placement.top_left(c)
       end
     },
     { rule = { name = 'pstree' },
       properties = { floating = true, below = true, sticky = true, focusable = false, opacity = 0, geometry = { width = 1920 / 3, height = 1080 / 2 } },
       callback = function(c)
-          c:geometry { width = 1920 / 3, height = 1080 / 2 }
+          c:geometry { width = 1920 / 3, height = 1080 / 3 }
           awful.placement.bottom_left(c)
+      end
+    },
+    { rule = { name = 'htop' },
+      properties = { floating = true, below = true, sticky = true, focusable = false, opacity = 0, geometry = { width = 1920 / 3, height = 1080 / 2 } },
+      callback = function(c)
+          c:geometry { width = 1920 / 3, height = 1080 / 3 }
+          awful.placement.left(c)
       end
     },
     { rule = { name = 'cmus' },

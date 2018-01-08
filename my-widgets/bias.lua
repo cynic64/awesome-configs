@@ -8,18 +8,17 @@ local gears = require('gears')
 local cairo = require('lgi').cairo
 
 local opac = 0.7
-local state = 'hidden'
 
 local function show_cave()
     for _, c in ipairs(client.get()) do
-        if c.name == '"cmus"' or c.name == 'cava' or c.name == 'neofetch' or c.name == 'pipes.sh' or c.name == 'pstree' then
-            if state == 'hidden' then
+        if c.name == '"cmus"' or c.name == 'cava' or c.name == 'neofetch' or c.name == 'pipes.sh' or c.name == 'pstree' or c.name == 'htop' then
+            if bias_state == 'hidden' then
                 c.opacity = opac
                 c.minimized = false
                 axebox.visible = false
                 artemis_visible = false
                 art_update()
-            elseif state == 'shown' then
+            elseif bias_state == 'shown' then
                 c.opacity = 0
                 c.minimized = true
                 if current_mon == 'artemis' then artemis_visible = true
@@ -27,10 +26,11 @@ local function show_cave()
                 end
                 art_update()
             end
+            if visible_clients then c.ontop = true else c.ontop = false end
         end
     end
-    if state == 'hidden' then state = 'shown'
-    else state = 'hidden' end
+    if bias_state == 'hidden' then bias_state = 'shown'
+    else bias_state = 'hidden' end
 end
 
 local hitbox = wibox { width = 1920, height = 1080, visible = true, opacity = 0, bg='#ff0000', below = true }
